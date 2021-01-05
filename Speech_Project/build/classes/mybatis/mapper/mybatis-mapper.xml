@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- SQL과 객체의 매핑 정의를 하는 XML 파일 -->
+<mapper namespace="UserMapper">
+	<!-- user table -->
+	<resultMap id="result_user" type="user">
+		<result property="id" column="id" />
+		<result property="pw" column="pw" />
+		<result property="username" column="username" />
+		<result property="email" column="email" />
+	</resultMap>
+	
+		<resultMap id="result_chart" type="keyword">
+		<result property="no" column="no" />
+		<result property="speech_date" column="date" />
+		
+	</resultMap>
+
+	<select id="login" parameterType="user" resultMap="result_user">
+		SELECT id,pw,username,email FROM USER WHERE email = #{email} and pw =
+		#{pw}
+	</select>
+
+	<select id="idcheck" parameterType="String" resultType="int">
+		SELECT count(*) FROM USER WHERE id = #{id}
+	</select>
+
+	<insert id="insert_user" parameterType="user">
+		INSERT INTO USER (id, pw, username, email) VALUES (#{id}, #{pw},
+		#{username}, #{email})
+	</insert>
+
+	<!-- speech table -->
+	<select id="best_list" resultType="keyword">
+		SELECT COUNT(keyword) AS NO,KEYWORD FROM SPEECH GROUP BY KEYWORD ORDER BY
+		COUNT(KEYWORD) DESC LIMIT 0,6
+	</select>
+	
+	<select id="word_list" resultMap="result_chart">
+		SELECT DATE_FORMAT(speech_date, '%Y%m%d') AS date, count(*) AS no FROM speech GROUP BY DATE_FORMAT(speech_date, '%Y%m%d') ORDER BY date ASC;
+	</select>
+
+	<insert id="insert_keyword" parameterType="keyword">
+		INSERT INTO SPEECH (email, keyword) VALUES (#{email}, #{keyword})
+	</insert>
+
+	<!-- engine table -->
+	<select id="select_url" parameterType="String" resultType="String">
+	SELECT URL FROM ENGINE WHERE ENGINE = #{word}
+	</select>
+	
+	<insert id="insert_engine" parameterType="engine">
+		INSERT INTO ENGINE VALUES (#{email}, #{engine}, #{url})
+	</insert>
+
+</mapper>
+
+
